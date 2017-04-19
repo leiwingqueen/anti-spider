@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<!-- 带 (*) 的表示必须配置 -->
+	
+	<!-- 服务器配置 (*), 服务器名称必须是 英文字母+数字 的形式 -->
+	<yyms_domain value=".gzdai.com" />
+	
+	<!-- 每页显示记录数 -->
+	<page_size value="15" />
+	
+	<!-- 显示最大记录数 -->
+	<page_max_size value="1000" />
+	
+	<!-- 是否使用本地cache,true使用，false 不使用 -->
+	<local_cache value="true"/>
+	
+	<app_id value="16"/>
+	<app_key value="kUSp2sFS984s"/>
+</config>

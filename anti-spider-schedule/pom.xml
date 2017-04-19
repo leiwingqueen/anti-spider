@@ -1,0 +1,116 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+		<artifactId>log</artifactId>
+		<groupId>com.elend</groupId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+	<artifactId>anti-spider-schedule</artifactId>
+	<description>anti-spider-schedule</description>
+	
+	<build>
+		<finalName>anti-spider-schedule</finalName>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<!-- added on 2013/4/10 -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.properties</include>
+					<include>**/*.xsd</include>
+					<include>**/*.dtd</include>
+					<include>**/spring.handlers</include>
+					<include>**/spring.schema</include>
+				</includes>
+			</resource>
+		</resources>
+		<!-- end -->
+		
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+			</testResource>
+		</testResources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-shade-plugin</artifactId>
+		        <version>2.3</version>
+		        <executions>
+		          <execution>
+		            <phase>package</phase>
+		            <goals>
+		              <goal>shade</goal>
+		            </goals>
+		            <configuration>
+		              <transformers>
+		                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+  							<resource>META-INF/spring.handlers</resource>
+						</transformer>
+						<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+						  <resource>META-INF/spring.schemas</resource>
+						</transformer>
+						<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+		                  <manifestEntries>
+		                    <X-Compile-Source-JDK>1.7</X-Compile-Source-JDK>
+		                    <X-Compile-Target-JDK>1.7</X-Compile-Target-JDK>
+		                  </manifestEntries>
+                		</transformer>
+		              </transformers>
+		              <!-- 针对个别的包，比如 bcpg-jdk15这种包会导致Invalid signature file digest for Manifest main attributes异常，下面敏感的文件不打包进去-->
+		              <filters>
+				        <filter>
+				            <artifact>*:*</artifact>
+				            <excludes>
+				                <exclude>META-INF/*.SF</exclude>
+				                <exclude>META-INF/*.DSA</exclude>
+				                <exclude>META-INF/*.RSA</exclude>
+				            </excludes>
+				        </filter>
+    				 </filters>
+		            </configuration>
+		          </execution>
+		        </executions>
+			</plugin>  
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>com.elend</groupId>
+			<artifactId>anti-spider-common</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.elend</groupId>
+			<artifactId>log-admin</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.elend</groupId>
+			<artifactId>p2p-util</artifactId>
+			<version>1.1.8</version>
+		</dependency>
+	</dependencies>
+</project>

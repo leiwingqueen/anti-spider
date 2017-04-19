@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- "namespace" must be the path of interface, or show error “is not known to the MapperRegistry�?when launch -->
+<mapper namespace="com.elend.log.mapper.AccessLogMapper">
+	
+	<!-- "id" must be as same as method name of the interface -->
+	<select id="list" resultType="accessLogPO" parameterType="accessLogSearchVO">
+		<![CDATA[select * from log.access_log ]]>
+		<where>
+			<if test="serverName != null and serverName != ''" >
+				<![CDATA[ AND server_name = #{serverName} ]]>
+			</if>
+			<if test="uri != null and uri != ''" >
+				<![CDATA[ AND uri = #{uri} ]]>
+			</if>
+			<if test="sessionId != null and sessionId != ''" >
+				<![CDATA[ AND session_id = #{sessionId} ]]>
+			</if>
+			<if test="userId != null and userId != ''" >
+				<![CDATA[ AND user_id = #{userId} ]]>
+			</if>
+			<if test="startTime != null and startTime != '' and endTime != null and endTime != '' " >
+				<![CDATA[ AND create_time between #{startTime} and #{endTime} ]]>
+			</if>
+			<if test="ip != null and ip != ''" >
+				<![CDATA[ AND ip = #{ip} ]]>
+			</if>
+		</where>
+		ORDER BY id DESC 
+		<![CDATA[ LIMIT #{start} , #{size}  ]]>
+	</select>
+	
+	<select id="count" resultType="int" parameterType="accessLogSearchVO">
+		<![CDATA[select count(*) as num from log.access_log ]]>
+		<where>
+			<if test="serverName != null and serverName != ''" >
+				<![CDATA[ AND server_name = #{serverName} ]]>
+			</if>
+			<if test="uri != null and uri != ''" >
+				<![CDATA[ AND uri = #{uri} ]]>
+			</if>
+			<if test="sessionId != null and sessionId != ''" >
+				<![CDATA[ AND session_id = #{sessionId} ]]>
+			</if>
+			<if test="userId != null and userId != ''" >
+				<![CDATA[ AND user_id = #{userId} ]]>
+			</if>
+			<if test="startTime != null and startTime != '' and endTime != null and endTime != '' " >
+				<![CDATA[ AND create_time between #{startTime} and #{endTime} ]]>
+			</if>
+		</where>
+	</select>
+	
+	<select id="get" resultType="accessLogPO" parameterType="int">
+		<![CDATA[
+			select * from log.access_log where id = #{id}
+		]]>
+	</select>
+	
+	<insert id="insert" parameterType="accessLogPO">
+		<![CDATA[
+			insert into log.access_log set
+							server_name=#{serverName},
+									uri=#{uri},
+									session_id=#{sessionId},
+									user_id=#{userId},
+									ip=#{ip},
+									use_time=#{useTime},
+									referer=#{referer},
+									user_agent=#{userAgent},
+									terminal=#{terminal},
+									operate=#{operate},
+									create_time=#{createTime},
+									isp=#{isp},
+									system=#{system}
+					]]>
+	</insert>
+    
+	<update id="update" parameterType="accessLogPO">
+		<![CDATA[
+			update log.access_log set
+							server_name=#{serverName},
+									uri=#{uri},
+									session_id=#{sessionId},
+									user_id=#{userId},
+									ip=#{ip},
+									use_time=#{useTime},
+									referer=#{referer},
+									user_agent=#{userAgent},
+									terminal=#{terminal},
+									operate=#{operate},
+									create_time=#{createTime},
+									isp=#{isp},
+									system=#{system}
+				where id = #{id}
+		]]>
+	</update>
+    
+	<delete id="delete" parameterType="int">
+		<![CDATA[
+			DELETE FROM log.access_log WHERE id = #{id}
+		]]>
+	</delete>
+	
+	<select id="listById" resultType="accessLogPO">
+		<![CDATA[select * from log.access_log where id>#{id} limit #{limit}]]>
+	</select>
+</mapper>

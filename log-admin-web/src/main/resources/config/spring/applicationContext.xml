@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tool="http://www.springframework.org/schema/tool" xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+			http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+			http://www.springframework.org/schema/tool http://www.springframework.org/schema/tool/spring-tool-3.1.xsd
+			http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.1.xsd"
+	>
+	<!-- default-lazy-init="true" -->
+	<!-- eucAdmin -->
+	<bean id="eucDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+	   <property name="driverClass" value="com.mysql.jdbc.Driver" />
+	   <property name="jdbcUrl" value="${euc.jdbc.url}" />
+	   <property name="user" value="${euc.jdbc.username}" />
+	   <property name="password" value="${euc.jdbc.password}" />
+	   <property name="minPoolSize" value="1" />
+	   <property name="maxPoolSize" value="10"/>  
+	   <property name="initialPoolSize" value="1"/>
+	   <property name="maxIdleTime" value="7200"/>
+	   <property name="idleConnectionTestPeriod" value="1800"></property>
+	</bean>
+	
+	<!-- 事务管理-->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="eucDataSource"/>
+	</bean>
+	
+	<tx:advice id="eucTxAdvice" transaction-manager="transactionManager">
+		<!-- the transactional semantics... -->
+		<tx:attributes>
+			<!-- all methods starting with 'get' are read-only -->
+			<tx:method name="get*" read-only="true" propagation="SUPPORTS"/>
+			<tx:method name="load*" read-only="true" propagation="SUPPORTS"/>
+			<tx:method name="list*" read-only="true" propagation="SUPPORTS"/>
+			<!-- other methods use the default transaction settings (see below) -->
+			<tx:method name="*" propagation="REQUIRED"/>
+		</tx:attributes>
+	</tx:advice>
+	<!-- ensure that the above transactional advice runs for any execution
+		of an operation defined by the FooService interface com.elend.p2p.euc.service.impl-->
+	<aop:config>
+		<aop:pointcut id="eucServiceOperation" expression="execution(* com.elend.p2p.euc.service.impl..*.*(..))"/>
+		<aop:advisor advice-ref="eucTxAdvice" pointcut-ref="eucServiceOperation"/>
+	</aop:config>
+	
+	<!-- Spring、MyBatis的整合，需要在 Spring 应用上下文中定义至少两样东西：一个SqlSessionFactory和至少一个数据映射器类（UserMapper->iocContext.xml）。 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	<!-- -->
+		<property name="configLocation" value="classpath:SqlMapConfig.xml" />
+		<property name="dataSource" ref="eucDataSource" />
+		<!-- mapper和resultmap配置路径 -->
+        <property name="mapperLocations">
+            <list>
+                <!-- 表示在以下所有目录中，以-resultmap.xml结尾所有文件 -->
+                <!-- 
+                <value>classpath:sql/Queue*.xml</value>
+                  -->
+            </list>
+        </property>
+        <property name="typeAliasesPackage" value="com.elend.p2p.euc.vo,com.elend.p2p.euc.model" />
+	</bean>
+	
+		<!-- 通过扫描的模式，扫描目录在com.euc.p2p.euc.dao目录下，所有的mapper都继承SqlMapper接口的接口， 这样一个bean就可以了 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.elend.p2p.euc.dao"/>
+        <property name="markerInterface" value="com.elend.p2p.mapper.SqlMapper"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+	
+		<bean id="DaoTarget" abstract="true">
+		<property name="sessionFactory">
+			<ref bean="factory" />
+		</property>
+	</bean>
+    <!-- 用于持有spring context,转变为静态类 -->
+    <bean class="com.elend.p2p.spring.SpringContextUtil"/>
+    
+	<bean id="normalMemcache" class="com.elend.commons.memcache.MemcacheImpl" init-method="init" destroy-method="destroy">
+		<property name="servers" value="memcached1.p2p.gzdai.com:11211,memcached2.p2p.gzdai.com:11211"/>
+		<property name="maxConn" value="400" />
+	</bean>
+	
+	<!-- 分布式session支持 -->
+    <bean id="sessionMemcache" class="com.elend.p2p.util.memcached.MemcacheWithBackupImpl" init-method="init" destroy-method="destroy">
+		<property name="maxConn" value="400" />
+		<property name="servers" value="memcached1.p2p.gzdai.com:11211"/>
+		<property name="bakServers" value="memcached2.p2p.gzdai.com:11211"/>
+	</bean>
+	<!-- cookie辅助类 -->
+	<bean id="cookieUtil" class="com.elend.p2p.session.CookieUtil" lazy-init="false">
+		<property name="domain" value=".admin.gzdai.com" />
+	</bean>
+	<!-- 分布式session 拦截器 -->
+	<bean id="distributedSessionFilter" class="com.elend.p2p.session.AdminSessionFilter" lazy-init="false">
+		<property name="memcache" ref="sessionMemcache" />
+		<property name="jsessionid" value="ADMIN_SESSIONID" />
+		<property name="cookieUtil" ref="cookieUtil" />
+	</bean>
+</beans>

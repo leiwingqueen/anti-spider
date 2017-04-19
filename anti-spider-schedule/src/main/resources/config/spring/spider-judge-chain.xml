@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tool="http://www.springframework.org/schema/tool" xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+			http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+			http://www.springframework.org/schema/tool http://www.springframework.org/schema/tool/spring-tool-3.1.xsd
+			http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.1.xsd"
+	default-lazy-init="true">
+	
+	<!-- 分钟处理链 -->
+	<bean id="minuteSpiderJudgeChain" class="com.elend.spider.handler.SpiderJudgeChain">
+		<property name="handlerList">
+			<list>
+				<!-- User-Agent检测 -->
+				<bean class="com.elend.spider.handler.UserAgentJudgeHandlerImpl">
+					<!-- 限制user-agent -->
+					<property name="limitAgent">
+						<map>
+							<!-- 正则:限制的访问次数 -->
+							<entry key="360Spider" value="20" />
+							<entry key="Baiduspider" value="20" />
+							<entry key="Googlebot" value="20" />
+							<entry key="Sosospider"  value="20" />
+							<entry key="sogou" value="20" />
+							<entry key="python" value="20" />
+						</map>
+					</property>
+				</bean>
+				<!-- 访问次数限制检测 -->
+				<bean class="com.elend.spider.handler.AccessNumJudgeHandlerImpl">
+					<!-- 限制次数 -->
+					<property name="limitNum" value="200" />
+				</bean>
+				<!-- 访问资源数量检测 -->
+				<bean class="com.elend.spider.handler.UrlNumJudgeHandlerImpl">
+					<!-- 限制数量 -->
+					<property name="limitNum" value="200" />
+				</bean>
+				
+				<!-- 每个用户的平均访问次数 -->
+				<bean class="com.elend.spider.handler.UserNumJudgeHandlerImpl">
+					<!-- 限制数量 -->
+					<property name="limitNum" value="500" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 小时处理链 -->
+	<bean id="hourSpiderJudgeChain" class="com.elend.spider.handler.SpiderJudgeChain">
+		<property name="handlerList">
+			<list>
+				<!-- User-Agent检测 -->
+				<bean class="com.elend.spider.handler.UserAgentJudgeHandlerImpl">
+					<!-- 限制user-agent -->
+					<property name="limitAgent">
+						<map>
+							<!-- 正则:限制的访问次数 -->
+							<entry key="360Spider" value="20" />
+							<entry key="Baiduspider" value="20" />
+							<entry key="Googlebot" value="20" />
+							<entry key="Sosospider"  value="20" />
+							<entry key="sogou" value="20" />
+							<entry key="python" value="20" />
+						</map>
+					</property>
+				</bean>
+				<!-- 访问次数限制检测 -->
+				<bean class="com.elend.spider.handler.AccessNumJudgeHandlerImpl">
+					<!-- 限制次数 -->
+					<property name="limitNum" value="1100" />
+				</bean>
+				<!-- 访问资源数量检测 -->
+				<bean class="com.elend.spider.handler.UrlNumJudgeHandlerImpl">
+					<!-- 限制数量 -->
+					<property name="limitNum" value="400" />
+				</bean>
+				<!-- 每个用户的平均访问次数 -->
+				<bean class="com.elend.spider.handler.UserNumJudgeHandlerImpl">
+					<!-- 限制数量 -->
+					<property name="limitNum" value="1600" />
+				</bean>
+				<!-- 访问的频率集中度 -->
+				<bean class="com.elend.spider.handler.AccessNumVarianceJudgeHandlerImpl">
+					<!-- 限制数量 -->
+					<property name="limitVariance" value="1" />
+					<!-- 访问次数在限制值以上才检验方差 -->
+					<property name="accessNumLimit" value="500" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 天处理链 -->
+	<bean id="daySpiderJudgeChain" class="com.elend.spider.handler.SpiderJudgeChain">
+		<property name="handlerList">
+			<list>
+				<!-- User-Agent检测 -->
+				<bean class="com.elend.spider.handler.UserAgentJudgeHandlerImpl">
+					<!-- 限制user-agent -->
+					<property name="limitAgent">
+						<map>
+							<!-- 正则:限制的访问次数 -->
+							<entry key="360Spider" value="20" />
+							<entry key="Baiduspider" value="20" />
+							<entry key="Googlebot" value="20" />
+							<entry key="Sosospider"  value="20" />
+							<entry key="sogou" value="20" />
+							<entry key="python" value="20" />
+						</map>
+					</property>
+				</bean>
+				<!-- 访问次数限制检测 -->
+				<bean class="com.elend.spider.handler.AccessNumJudgeHandlerImpl">
+					<!-- 限制次数 -->
+					<property name="limitNum" value="7000" />
+				</bean>
+				<!-- 访问资源数量检测 -->
+				<bean class="com.elend.spider.handler.UrlNumJudgeHandlerImpl">
+					<!-- 限制数量 -->
+					<property name="limitNum" value="3000" />
+				</bean>
+				<!-- 每个用户的平均访问次数 -->
+				<bean class="com.elend.spider.handler.UserNumJudgeHandlerImpl">
+					<!-- 限制数量 -->
+					<property name="limitNum" value="2000" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+</beans>

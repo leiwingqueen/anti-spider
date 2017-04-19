@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>系统维护中</title>
+<style type="text/css">
+	*{ margin: 0; padding: 0;}
+	.wrong{ width: 600px; margin: 200px auto 0;}
+	.wrong_inner{}
+	.wrong .w_side{ float: left;}
+	.wrong .w_main{ float: left; margin-left: 30px; margin-top: 40px;}
+	.wrong .w_main h1{ font: 42px/1.5 simsun; text-shadow: 0 1px 3px rgba(0,0,0,.5)}
+	.wrong .w_main p{ padding-left: 8px; font-size: 12px;}
+	.wrong .w_main p em{ font-style: normal; color: #f60;}
+</style>
+</head>
+<script language="javascript">
+var e404time=10;
+function backToIndex(){
+	if(e404time==0){
+		window.location.href="http://suc.sysop.duowan.com";	
+	}
+	else{
+		e404time=e404time-1;
+		document.getElementById("weihu").innerHTML=" <em>"+parseInt(e404time)+" </em>秒后将返回运维门户";
+	}
+}
+setInterval("backToIndex()",1000)
+</script>
+
+<body>
+<div class="container">
+	<div class="wrong">
+		<div class="wrong_inner">
+			<div class="w_side">
+				<img src="/images/roadblock3.png" alt="系统维护中" />
+			</div>
+			
+			<div class="w_main">
+				<h1>系统维护中...</h1>
+				<p id="weihu"></p>
+				<!-- 
+				<p>将于 <em>10</em> 秒后返回</p>
+				 -->
+			</div>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

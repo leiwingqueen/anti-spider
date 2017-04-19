@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- "namespace" must be the path of interface, or show error “is not known to the MapperRegistry” when launch -->
+<mapper namespace="com.elend.spider.common.mapper.AntiSpiderBlackListMapper">
+	
+	<!-- "id" must be as same as method name of the interface -->
+	<select id="list" resultType="antiSpiderBlackListPO" parameterType="antiSpiderBlackListSearchVO">
+		<![CDATA[select * from anti_spider_black_list ]]>
+		<where>
+			<if test="ip != null and ip != ''" >
+				<![CDATA[ ip = #{ip}]]>
+			</if>
+			<if test="expireTime != null and expireTime != ''" >
+				<![CDATA[ AND expire_time >= #{expireTime} ]]>
+			</if>
+			<if test="startTime != null and startTime != ''" >
+				<![CDATA[ AND update_time >= #{startTime} ]]>
+			</if>
+			<if test="endTime != null and endTime != ''" >
+				<![CDATA[ AND update_time <= #{endTime} ]]>
+			</if>
+			<if test="createAdmin != null and createAdmin != ''" >
+				<![CDATA[ AND create_admin = #{createAdmin} ]]>
+			</if>
+			<if test="updateAdmin != null and updateAdmin != ''" >
+				<![CDATA[ AND update_admin = #{updateAdmin} ]]>
+			</if>
+		</where>
+		ORDER BY id DESC 
+		<![CDATA[ LIMIT #{start} , #{size}  ]]>
+	</select>
+	
+	<select id="count" resultType="int" parameterType="antiSpiderBlackListSearchVO">
+		<![CDATA[select count(*) as num from anti_spider_black_list ]]>
+		<where>
+			<if test="ip != null and ip != ''" >
+				<![CDATA[ ip = #{ip}  ]]>
+			</if>
+			<if test="expireTime != null and expireTime != ''" >
+				<![CDATA[ AND expire_time >= #{expireTime} ]]>
+			</if>
+			<if test="startTime != null and startTime != ''" >
+				<![CDATA[ AND create_time >= #{startTime} ]]>
+			</if>
+			<if test="endTime != null and endTime != ''" >
+				<![CDATA[ AND create_time <= #{endTime} ]]>
+			</if>
+			<if test="createAdmin != null and createAdmin != ''" >
+				<![CDATA[ AND create_admin = #{createAdmin} ]]>
+			</if>
+			<if test="updateAdmin != null and updateAdmin != ''" >
+				<![CDATA[ AND update_admin = #{updateAdmin} ]]>
+			</if>
+		</where>
+	</select>
+	
+	<select id="get" resultType="antiSpiderBlackListPO" parameterType="int">
+		<![CDATA[
+			select * from anti_spider_black_list where id = #{id}
+		]]>
+	</select>
+	
+	<insert id="insert" parameterType="antiSpiderBlackListPO" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+			insert into anti_spider_black_list set
+							ip=#{ip},
+							expire_time=#{expireTime},
+							create_time=#{createTime},
+							update_time=#{updateTime},
+							create_admin=#{createAdmin},
+							update_admin=#{updateAdmin}
+					on duplicate key update
+						<!-- 过期时间大于当前的过期时间，则更新记录，否则过期时间不需要改变。针对后台设置过期时间的场景，如果后台将个别IP长期设置为黑名单，反爬虫更新过期时间的时候不能把这个时间进行更新 --> 	
+							expire_time=if(#{expireTime}>expire_time,#{expireTime},expire_time),
+							update_time=#{updateTime},
+							update_admin=#{updateAdmin}
+	</insert>
+    
+	<update id="update" parameterType="antiSpiderBlackListPO">
+		<![CDATA[
+			update anti_spider_black_list set
+							ip=#{ip},
+							expire_time=#{expireTime},
+							create_time=#{createTime},
+							update_time=#{updateTime},
+							create_admin=#{createAdmin},
+							update_admin=#{updateAdmin}
+				where id = #{id}
+		]]>
+	</update>
+    
+	<delete id="delete" parameterType="int">
+		<![CDATA[
+			DELETE FROM anti_spider_black_list WHERE id = #{id}
+		]]>
+	</delete>
+	
+	<delete id="deleteByIp" parameterType="string">
+		<![CDATA[
+			DELETE FROM anti_spider_black_list WHERE ip = #{ip}
+		]]>
+	</delete>
+</mapper>

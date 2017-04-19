@@ -1,0 +1,67 @@
+/* 2014-06-16 toolsApp modified by wushufeng */
+@charset "utf-8"; 
+/**********插件类***********/
+
+/*分页和显示导航 */
+.paginationbar{float:left;height:28px;margin-top:10px;}
+.paginationbar ul{ margin: 0;}
+.paginationbar li.list{width:auto;}
+.paginationbar li { float:left; line-height:20px;}
+.paginationbar a,.paginationbar span,.displayNum a,.displayNum span,#displayNum_cont a,#displayNum_cont span{ float:left; padding:0 6px;text-decoration:none; margin:3px; color:#333;border:1px solid #C5C5C5; background:#fff; border-radius: 3px;}
+.paginationbar a:hover,.displayNum a:hover,#displayNum_cont a:hover{border-color:rgba(82, 168, 236, 0.8); transition: all .5s ease-in-out 0s; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6)}
+.paginationbar a.first{margin-left:0;}
+.paginationbar span,#displayNum_cont span{ background:#fff;border-color:rgba(82, 168, 236, 0.8); color: #239DDB;box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(82, 168, 236, 0.6)}
+.paginationbar .num { display:none;}
+.paginationbar .goto{height:28px;line-height:28px;margin-left:20px;}
+.paginationbar .goto input[type=text]{ margin: 0 2px; padding: 0 4px; width:20px; text-align: center;}
+.paginationbar .goto input[type=button]{width:40px;padding:2px;}
+
+.displayNum{float:right;height:28px;margin-top:10px;}
+.displayNum a,#displayNum_cont a{cursor:pointer;}
+.displayNum a,.displayNum span,#displayNum_cont a,#displayNum_cont span{float:none;display:inline-block;}
+.displayNum .btn{cursor:pointer;}
+.displayNum .cont{display:none;}
+#displayNum_cont{background:#fff;}
+#displayNum_cont a:hover{border-color:rgba(170,201,71,.8);}
+.pageCount {
+	margin: -10px 0 5px 0;
+	padding: 0 8px;
+	background-color: #FCF8E3;
+	border: 1px solid #FBEED5;
+	border-radius: 4px;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+	color: #C09853;
+}
+
+/*弹出窗口*/
+.pop-bg{position:absolute;z-index:99;top:0; left:0; width:100%;height:100%; background:#000; filter:alpha(opacity=20); opacity:0.2; display:none;}
+.pop-bg-trans{position:absolute;z-index:999;top:0; left:0; width:100%;height:100%; background:#fff; filter:alpha(opacity=0); opacity:0; display:none;}
+.pop-loading,.popAutoTips{position:fixed;z-index:9999;width:240px;line-height:20px;padding:15px 10px;top:50%;left:50%;margin-left:-120px;margin-top:-50px;text-align:center;border-radius:4px;background:#666;color:#fff;display:none;}
+.pop-cont,.pop-cont-corner{display:none;border:5px solid rgba(0, 0, 0, 0.2);border-radius:5px;position:absolute;}
+.pop-cont>dl{border:1px solid #999;}
+.pop-cont dt,.pop-cont-corner dt{ height:30px;line-height:30px; font-size:14px;color:#fff;font-weight:bold;background:#A5C11B;padding-left:12px;border-bottom:1px solid #CCCCCC;position:relative;cursor:move;}
+.pop-cont dt .pop-close,.pop-cont-corner .pop-close{ width:15px;height:15px;position:absolute; top:7px; right:6px; cursor:pointer; color:#fff;background:url(http://yyms.sysop.duowan.com/admin/images/close-popup.gif) left no-repeat;}
+.pop-cont dt .pop-close:hover,.pop-cont-corner .pop-close:hover{background-position:right center;}
+.pop-cont dd,.pop-cont-corner dd{ background:#fff;}
+.pop-cont dd .cont,.pop-cont-corner dd .cont{padding:20px;position:relative;min-width:220px;}
+.pop-cont dd .cont .cont_t{word-wrap:break-word;word-break: normal;}
+.pop-cont dd .cont .form{margin:0;}
+.pop-cont dd .bottom{height:22px;line-height:22px;padding:7px 6px;text-align:right; background:#EEEEEE;border-top:1px solid #ccc;}
+
+/*弹出提示窗口*/
+.popTips{min-width:320px;max-width:460px;}
+.popTips .btn{margin-top:10px;text-align:right;}
+.popTips .btn input[type=button]{width:60px;}
+.popTips dd{font-size:14px;}
+.popTips dd .cont_t .ok{color:green;font-weight:bold;}
+.popTips dd .cont_t .error{color:red;font-weight:bold;}
+
+/*弹出确认窗口*/
+.popConfirm .btn{text-align:right;margin-top:16px;vertical-align:middle;}
+.popConfirm .cont p{margin-bottom:10px;}
+.popConfirm .cont .check{display:block;margin-top:10px;}
+
+
+/*分页大小悬停窗口*/
+.tip-hover-cont,.tip-click-cont { position:absolute; display:none; padding:10px; max-width:480px;border:1px solid #CFE4CF; z-index:9999;background:#fff;}
+.tip-hover-cont .x,.tip-click-cont .x{position:absolute;top:6px;right:6px;line-height:8px;padding:2px;border:1px solid #dedede;color:#dedede;cursor:pointer;}

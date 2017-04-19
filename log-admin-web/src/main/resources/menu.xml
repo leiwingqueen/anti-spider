@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu>
+
+      <!-- 必须保证sid唯一，系统将根据sid对菜单项进行增、删、改 
+     <menuItem name="系统日志管理" sid="sys" url="#" hide="0">
+             <menuItem name="日志查询" sid="sys_logList" url="/accessLog/accessLog.jspx" hide="0">
+                     <resource url="/accessLog/accessLog.jspx"></resource>
+                     <resource url="/accessLog/list.do"></resource>
+             </menuItem>
+     </menuItem>
+     
+      <menuItem name="公共菜单" sid="common" url="#" hide="1">
+            <menuItem name="公共菜单" sid="common_welcome" url="/welcome.jspx" hide="1">
+                       <resource url="/welcome.jspx"></resource>
+                       <resource url="/common/loadUserInfo.do"></resource>
+                       <resource url="/common/listUserApp.do"></resource>
+                       <resource url="/common/loadServerIp.do"></resource>
+                       <resource url="/common/menu.do"></resource>
+                       <resource url="/common/listAppUser.do"></resource>
+             </menuItem>
+      </menuItem>
+      -->
+</menu>

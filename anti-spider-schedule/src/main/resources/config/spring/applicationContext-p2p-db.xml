@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tool="http://www.springframework.org/schema/tool" xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+			http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
+			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+			http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+			http://www.springframework.org/schema/tool http://www.springframework.org/schema/tool/spring-tool-3.1.xsd
+			http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.1.xsd"
+	default-lazy-init="true">
+
+	<!-- 本地 -->
+	<bean id="logDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+
+		<property name="driverClass" value="com.mysql.jdbc.Driver" />
+		<property name="jdbcUrl" value="${log.jdbc.url}" />
+		<property name="user" value="${log.jdbc.username}" />
+		<property name="password" value="${log.jdbc.password}" />
+
+		<property name="initialPoolSize" value="1" />
+		<property name="minPoolSize" value="1" />
+		<property name="maxPoolSize" value="10" />
+		<property name="maxIdleTime" value="7200" />
+
+		
+		<property name="acquireIncrement" value="5" />
+		<property name="acquireRetryAttempts" value="2" />
+		<property name="acquireRetryDelay" value="1000" />
+		<property name="breakAfterAcquireFailure" value="false" />
+
+		<property name="checkoutTimeout" value="200000" />
+
+		<property name="autoCommitOnClose" value="false" />
+		<property name="forceIgnoreUnresolvedTransactions" value="false" />
+		<property name="unreturnedConnectionTimeout" value="2000" />
+		
+		<property name="maxStatements" value="100" />
+		<property name="maxStatementsPerConnection" value="3" />
+		<property name="usesTraditionalReflectiveProxies" value="false" />
+		<property name="numHelperThreads" value="5" />
+		
+		
+		<property name="preferredTestQuery" value="SELECT 1;" />
+		<!-- 单位 ms -->
+    	<property name="idleConnectionTestPeriod" value="2000" />
+    	<property name="testConnectionOnCheckout" value="true" />
+        
+	</bean>
+	<!-- 慢sql 监控 start -->
+	<bean id="stat-filter" class="com.alibaba.druid.filter.stat.StatFilter">
+        <!--慢SQL统计，如果SQL执行时间超过一定时间则记录为慢SQL  -->
+        <property name="slowSqlMillis" value="500" />
+        <!--慢SQL统计日志输出  -->
+        <property name="logSlowSql" value="true" />
+        <!--合并SQL统计 例如select * from table t where t.id =1，会被变为select * from table t where t.id =？来统计  -->
+        <property name="mergeSql" value="true" />
+    </bean>
+	<!-- 慢sql 监控 end -->
+	
+	<!-- 事务管理-->
+	
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="logDataSource"/>
+	</bean>
+	
+	<!-- 用注解来实现事务管理 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<bean id="normalMemcache" class="com.elend.commons.memcache.MemcacheImpl" init-method="init" destroy-method="destroy">
+		<property name="servers" value="memcached1.p2p.gzdai.com:11211,memcached2.p2p.gzdai.com:11211"/>
+		<property name="maxConn" value="400" />
+	</bean>
+	
+    <bean id="memcachedLock" class="com.elend.p2p.util.memcached.MemcachedLock">
+		<property name="memcached" ref="normalMemcache"/>
+		<property name="prefix" value="mapLock:" />
+	</bean>
+	
+	<!-- 用作计数器的memcached（风控计数、SendMessageHelper发送短信计数）-->
+    <bean id="counterMemcache" class="com.elend.p2p.util.memcached.CounterMemcacheImpl" init-method="init" destroy-method="destroy">
+		<property name="servers" value="memcached1.p2p.gzdai.com:11212,memcached2.p2p.gzdai.com:11212"/>
+		<property name="maxConn" value="300" />
+	</bean>
+	
+	<!-- 带主备功能的memache -->
+	<bean id="memcacheBack" class="com.elend.p2p.util.memcached.MemcacheWithBackupImpl" init-method="init" destroy-method="destroy">
+		<property name="maxConn" value="400" />
+		<property name="servers" value="memcached1.p2p.gzdai.com:11211"/>
+		<property name="bakServers" value="memcached2.p2p.gzdai.com:11211"/>
+	</bean>
+	<!-- logback的aop配置，写入traceId -->
+    <bean id="logbackTraceIdInterceptor"
+          class="com.elend.p2p.util.LogbackTraceIdInterceptor">
+    </bean>
+    <aop:config>
+        <aop:pointcut id="logback-traceId-pointcut" expression="@annotation(com.elend.p2p.annotation.Trace)"/>
+        <aop:advisor advice-ref="logbackTraceIdInterceptor" pointcut-ref="logback-traceId-pointcut" />
+    </aop:config>
+</beans>

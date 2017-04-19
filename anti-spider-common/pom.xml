@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+		<artifactId>log</artifactId>
+		<groupId>com.elend</groupId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+	<artifactId>anti-spider-common</artifactId>
+	<description>anti-spider-common</description>
+	
+	<dependencies>
+		<dependency>
+			<groupId>com.elend</groupId>
+			<artifactId>zk-conf</artifactId>
+			<version>1.0.3</version>
+		</dependency>
+	</dependencies>
+	
+	
+	<build>  
+    	<plugins>  
+      		<plugin>  
+			    <groupId>com.elend.maven</groupId>  
+			    <artifactId>maven-code-generate-plugin</artifactId>  
+			    <version>2.1</version>  
+      		</plugin>  
+    	</plugins>  
+  	</build>
+  	<profiles>  
+        <profile>  
+             <id>code-generate-profile</id>  
+             <properties>  
+                  <url>jdbc:mysql://mysql.elend.gzdai.com:3306/log?useUnicode=true&amp;amp;characterEncoding=utf8&amp;amp;autoReconnect=true</url>  
+                  <username>elend</username>  
+                  <password>ZstRSCPg+</password>  
+                  <tableName>anti_spider_white_list</tableName>
+                  <packageName>com.elend.spider.common</packageName> 
+                  <searchParams>ip,create_time,create_admin</searchParams>
+                  <mapperFlag>true</mapperFlag> 
+                  <mybatisXmlFlag>true</mybatisXmlFlag> 
+                  <serviceFlag>true</serviceFlag> 
+                  <serviceImplFlag>true</serviceImplFlag> 
+                  <modelFlag>true</modelFlag> 
+                  <voFlag>true</voFlag> 
+                  <searchVoFlag>true</searchVoFlag> 
+                  <controllerFlag>false</controllerFlag> 
+             </properties>  
+        </profile>  
+ 	</profiles> 
+</project>

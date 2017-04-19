@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- "namespace" must be the path of interface, or show error “is not known to the MapperRegistry” when launch -->
+<mapper namespace="com.elend.spider.common.mapper.AntiSpiderLogMapper">
+	
+	<!-- "id" must be as same as method name of the interface -->
+	<select id="list" resultType="antiSpiderLogPO" parameterType="antiSpiderLogSearchVO">
+		<![CDATA[select * from anti_spider_log ]]>
+		<where>
+			<if test="startTime != null and startTime != ''" >
+				<![CDATA[ AND create_time >= #{startTime} ]]>
+			</if>
+			<if test="endTime != null and endTime != ''" >
+				<![CDATA[ AND create_time <= #{endTime} ]]>
+			</if>
+			<if test="ip != null and ip != ''" >
+				<![CDATA[ AND ip = #{ip} ]]>
+			</if>
+		</where>
+		ORDER BY id DESC 
+		<![CDATA[ LIMIT #{start} , #{size}  ]]>
+	</select>
+	
+	<select id="count" resultType="int" parameterType="antiSpiderLogSearchVO">
+		<![CDATA[select count(*) as num from anti_spider_log ]]>
+		<where>
+			<if test="startTime != null and startTime != ''" >
+				<![CDATA[ AND create_time >= #{startTime} ]]>
+			</if>
+			<if test="endTime != null and endTime != ''" >
+				<![CDATA[ AND create_time <= #{endTime} ]]>
+			</if>
+			<if test="ip != null and ip != ''" >
+				<![CDATA[ AND ip = #{ip} ]]>
+			</if>
+		</where>
+	</select>
+	
+	<select id="get" resultType="antiSpiderLogPO" parameterType="int">
+		<![CDATA[
+			select * from anti_spider_log where id = #{id}
+		]]>
+	</select>
+	
+	<insert id="insert" parameterType="antiSpiderLogPO">
+		<![CDATA[
+			insert into anti_spider_log set
+							ip=#{ip},
+									list_type=#{listType},
+									opt_type=#{optType},
+									remark=#{remark},
+									create_time=#{createTime},
+									create_admin=#{createAdmin}
+					]]>
+	</insert>
+    
+	<update id="update" parameterType="antiSpiderLogPO">
+		<![CDATA[
+			update anti_spider_log set
+							ip=#{ip},
+									list_type=#{listType},
+									opt_type=#{optType},
+									remark=#{remark},
+									create_time=#{createTime},
+									create_admin=#{createAdmin}
+				where id = #{id}
+		]]>
+	</update>
+    
+	<delete id="delete" parameterType="int">
+		<![CDATA[
+			DELETE FROM anti_spider_log WHERE id = #{id}
+		]]>
+	</delete>
+</mapper>
